@@ -32,7 +32,6 @@ class MainActivity : AppCompatActivity() {
         binding.viewPager.orientation = ViewPager2.ORIENTATION_VERTICAL
     }
 
-
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
         if (hasFocus) hideSystemUI()
