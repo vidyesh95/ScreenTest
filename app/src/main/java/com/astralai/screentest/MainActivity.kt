@@ -4,9 +4,9 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.WindowInsets
-import android.view.WindowInsetsController
-import android.view.WindowManager
+import android.view.WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
 import androidx.viewpager2.widget.ViewPager2
 import com.astralai.screentest.adapter.ViewPagerAdapter
 import com.astralai.screentest.databinding.ActivityMainBinding
@@ -14,12 +14,13 @@ import com.astralai.screentest.model.ViewPagerItem
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+    private lateinit var view: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.Theme_ScreenTest)
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
-        val view = binding.root
+        view = binding.root
         setContentView(view)
 
         val colorsList = ArrayList<ViewPagerItem>()
@@ -41,10 +42,24 @@ class MainActivity : AppCompatActivity() {
 
     private fun hideSystemUI() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            val flag = WindowInsets.Type.statusBars()
+            // Tell the window that we want to handle/fit any system windows
+            WindowCompat.setDecorFitsSystemWindows(window, false)
+
+            val controller = view.windowInsetsController
+
+            // Hide the keyboard (IME)
+            controller?.hide(WindowInsets.Type.ime())
+
+            // Sticky Immersive is now ...
+            controller?.systemBarsBehavior = BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+
+            // When we want to hide the system bars
+            controller?.hide(WindowInsets.Type.systemBars())
+
+            /*val flag = WindowInsets.Type.statusBars()
             WindowInsets.Type.navigationBars()
             WindowInsets.Type.captionBar()
-            window?.insetsController?.hide(flag)
+            window?.insetsController?.hide(flag)*/
         } else {
             //noinspection
             @Suppress("DEPRECATION")
